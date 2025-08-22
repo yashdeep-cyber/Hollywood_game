@@ -1,113 +1,168 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Hollywood Movie Guessing Game</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background-color: #f0f0f0;
-      padding: 20px;
-    }
-    #word {
-      font-size: 30px;
-      letter-spacing: 5px;
-    }
-    input {
-      padding: 8px;
-      font-size: 16px;
-    }
-    button {
-      padding: 10px 15px;
-      font-size: 16px;
-      margin: 5px;
-      cursor: pointer;
-    }
-    #message {
-      margin-top: 15px;
-      font-weight: bold;
-    }
-  </style>
+    <title>Hollywood Movie Guess</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #222;
+            color: white;
+        }
+        h1 {
+            color: #ffcc00;
+        }
+        #wordDisplay {
+            font-size: 2em;
+            letter-spacing: 10px;
+        }
+        #hollywood {
+            font-size: 1.5em;
+            color: red;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
-<h1>Hollywood Movie Guessing Game</h1>
-<div id="word"></div>
+<h1>🎬 Hollywood Movie Guess 🎬</h1>
+<p id="hollywood">HOLLYWOOD</p>
+<p id="wordDisplay"></p>
+<p id="hint" style="color: lightblue;"></p>
+
+<div id="letters"></div>
 <br>
-<input type="text" id="guess" maxlength="1" placeholder="Enter a letter">
-<button onclick="makeGuess()">Guess</button>
+<button onclick="showHint()">Hint</button>
 <button onclick="nextMovie()">Next Movie</button>
 
-<div id="message"></div>
-
 <script>
-  const movies = [
-    "THE MATRIX", "INCEPTION", "TITANIC", "GLADIATOR", "AVATAR", "JURASSIC PARK", "THE GODFATHER",
-    "FORREST GUMP", "THE DARK KNIGHT", "STAR WARS", "INTERSTELLAR", "THE SHAWSHANK REDEMPTION",
-    "FIGHT CLUB", "PULP FICTION", "THE LION KING", "BACK TO THE FUTURE", "THE AVENGERS", "IRON MAN",
-    "THOR", "BLACK PANTHER", "DOCTOR STRANGE", "CAPTAIN MARVEL", "GUARDIANS OF THE GALAXY",
-    "SPIDER MAN", "NO TIME TO DIE", "MISSION IMPOSSIBLE", "TOP GUN", "FROZEN", "THE INCREDIBLES",
-    "COCO", "TOY STORY", "FINDING NEMO", "MONSTERS INC", "RATATOUILLE", "UP", "WALL E", "SOUL",
-    "BRAVEHEART", "GOODFELLAS", "CASABLANCA", "KING KONG", "AVENGERS ENDGAME", "AVENGERS INFINITY WAR",
-    "SHREK", "KUNG FU PANDA", "MADAGASCAR", "ZOOTOPIA", "ALADDIN", "BEAUTY AND THE BEAST", "MULAN"
-  ];
+const movies = [
+    {title: "THE MATRIX", hint: "A hacker discovers reality is a simulation"},
+    {title: "INCEPTION", hint: "Dream within a dream"},
+    {title: "GLADIATOR", hint: "Roman general turned slave"},
+    {title: "TITANIC", hint: "Ship hits iceberg"},
+    {title: "THE GODFATHER", hint: "Mafia family saga"},
+    {title: "AVATAR", hint: "Blue alien planet Pandora"},
+    {title: "JURASSIC PARK", hint: "Dinosaurs brought back to life"},
+    {title: "THE DARK KNIGHT", hint: "Batman vs Joker"},
+    {title: "FORREST GUMP", hint: "Life is like a box of chocolates"},
+    {title: "PULP FICTION", hint: "Non-linear crime drama"},
+    {title: "FIGHT CLUB", hint: "First rule is you don’t talk about it"},
+    {title: "THE SHAWSHANK REDEMPTION", hint: "Prison escape story"},
+    {title: "THE LION KING", hint: "Animated African lion"},
+    {title: "BACK TO THE FUTURE", hint: "Time travel with a DeLorean"},
+    {title: "THE AVENGERS", hint: "Earth's mightiest heroes"},
+    {title: "IRON MAN", hint: "Billionaire builds armored suit"},
+    {title: "BLACK PANTHER", hint: "Wakanda forever"},
+    {title: "DOCTOR STRANGE", hint: "Master of the mystic arts"},
+    {title: "CAPTAIN AMERICA", hint: "Super soldier"},
+    {title: "GUARDIANS OF THE GALAXY", hint: "Space misfits"},
+    {title: "THOR RAGNAROK", hint: "God of Thunder"},
+    {title: "SPIDER MAN", hint: "Friendly neighborhood hero"},
+    {title: "DEADPOOL", hint: "R-rated superhero"},
+    {title: "LOGAN", hint: "Old man Wolverine"},
+    {title: "AVENGERS ENDGAME", hint: "Final battle against Thanos"},
+    {title: "STAR WARS", hint: "A galaxy far far away"},
+    {title: "ROGUE ONE", hint: "Stealing Death Star plans"},
+    {title: "THE FORCE AWAKENS", hint: "Rey’s journey begins"},
+    {title: "THE RISE OF SKYWALKER", hint: "End of Skywalker saga"},
+    {title: "OBLIVION", hint: "Tom Cruise in post-apocalypse"},
+    {title: "INTERSTELLAR", hint: "Space and time travel"},
+    {title: "TENET", hint: "Time inversion thriller"},
+    {title: "THE PRESTIGE", hint: "Magician rivalry"},
+    {title: "MEMENTO", hint: "Man with short-term memory loss"},
+    {title: "DUNKIRK", hint: "WWII evacuation"},
+    {title: "THE HURT LOCKER", hint: "Bomb disposal in Iraq"},
+    {title: "1917", hint: "One-shot WWI mission"},
+    {title: "SAVING PRIVATE RYAN", hint: "WWII rescue mission"},
+    {title: "HACKSAW RIDGE", hint: "War medic without a gun"},
+    {title: "BRAVEHEART", hint: "Scottish freedom fighter"},
+    {title: "APOCALYPTO", hint: "Mayan civilization chase"},
+    {title: "THE REVENANT", hint: "Man vs nature survival"},
+    {title: "CAST AWAY", hint: "Stranded on island"},
+    {title: "THE TERMINATOR", hint: "I'll be back"},
+    {title: "TERMINATOR 2", hint: "Judgment Day"},
+    {title: "ROCKY", hint: "Boxing underdog"},
+    {title: "CREED", hint: "Son of Apollo Creed"},
+    {title: "KING KONG", hint: "Giant ape in New York"},
+    {title: "GODZILLA", hint: "Monster king"},
+];
 
-  let selectedMovie = "";
-  let guessedLetters = [];
-  let displayWord = "";
+let currentMovie = {};
+let displayWord = [];
+let hollywood = "HOLLYWOOD";
 
-  function startGame() {
-    selectedMovie = movies[Math.floor(Math.random() * movies.length)];
-    guessedLetters = [];
+function startGame() {
+    currentMovie = movies[Math.floor(Math.random() * movies.length)];
+    displayWord = currentMovie.title.split("").map(letter => {
+        if ("AEIOU ".includes(letter)) return letter;
+        return "_";
+    });
+    hollywood = "HOLLYWOOD";
     updateDisplay();
-    document.getElementById("message").innerText = "";
-  }
+    createLetterButtons();
+    document.getElementById("hint").innerText = "";
+}
 
-  function updateDisplay() {
-    displayWord = selectedMovie.split("").map(letter => {
-      if (letter === " ") return "/";
-      return guessedLetters.includes(letter) ? letter : "_";
-    }).join(" ");
-    document.getElementById("word").innerText = displayWord;
-  }
+function updateDisplay() {
+    document.getElementById("wordDisplay").innerText = displayWord.join(" ");
+    document.getElementById("hollywood").innerText = hollywood;
+}
 
-  function makeGuess() {
-    const guessInput = document.getElementById("guess");
-    const guess = guessInput.value.toUpperCase();
-    guessInput.value = "";
-
-    if (!guess || guess.length !== 1 || !/[A-Z]/.test(guess)) {
-      document.getElementById("message").innerText = "Please enter a valid letter.";
-      return;
+function createLetterButtons() {
+    const lettersDiv = document.getElementById("letters");
+    lettersDiv.innerHTML = "";
+    for (let i = 65; i <= 90; i++) {
+        let letter = String.fromCharCode(i);
+        if (!"AEIOU".includes(letter)) { 
+            let btn = document.createElement("button");
+            btn.innerText = letter;
+            btn.onclick = () => guessLetter(letter, btn);
+            lettersDiv.appendChild(btn);
+        }
     }
+}
 
-    if (guessedLetters.includes(guess)) {
-      document.getElementById("message").innerText = "You already guessed that letter.";
-      return;
+function guessLetter(letter, btn) {
+    btn.disabled = true;
+    let correct = false;
+    currentMovie.title.split("").forEach((char, index) => {
+        if (char === letter) {
+            displayWord[index] = letter;
+            correct = true;
+        }
+    });
+
+    if (!correct) {
+        hollywood = hollywood.slice(0, -1);
+        if (hollywood.length === 0) {
+            alert("Game Over! The movie was: " + currentMovie.title);
+            startGame();
+        }
+    } else if (!displayWord.includes("_")) {
+        alert("🎉 You guessed it! The movie was: " + currentMovie.title);
+        startGame();
     }
-
-    guessedLetters.push(guess);
-
-    if (selectedMovie.includes(guess)) {
-      document.getElementById("message").innerText = "Good guess!";
-    } else {
-      document.getElementById("message").innerText = "Wrong guess!";
-    }
-
     updateDisplay();
+}
 
-    if (!displayWord.includes("_")) {
-      document.getElementById("message").innerText = "🎉 You guessed the movie!";
-    }
-  }
+function showHint() {
+    document.getElementById("hint").innerText = "Hint: " + currentMovie.hint;
+}
 
-  function nextMovie() {
+function nextMovie() {
     startGame();
-  }
+}
 
-  // Start the first game
-  startGame();
+startGame();
 </script>
 
 </body>
 </html>
+
+
